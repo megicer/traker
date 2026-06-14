@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 id="title">Трекер подтягиваний</h1>
+    <input type="number" id="rep-input" placeholder="Сколько раз сделал?" />
+    <button id="add-btn">Добавить подход</button>
+    <button id="clear-btn">Сбросить тренировку</button>
+    <ul id="sets-list"></ul>
+    <p id="total-display"></p>
+    <script>
+        let repsArray = JSON.parse(localStorage.getItem('myReps')) || [];
+
+        const btn = document.querySelector('#add-btn')
+        const clearBtn = document.querySelector('#clear-btn')
+        const inp = document.querySelector('#rep-input')
+        const listEl = document.querySelector('#sets-list');
+        const totalDisplay = document.querySelector('#total-display');   
+
+        const render = () => {
+            listEl.innerHTML = "";
+            repsArray.forEach((item, index) => {  
+                listEl.innerHTML += `<li>Подход №${index + 1}: <b>${item}</b> раз</li>`;
+            });
+
+            const total = repsArray.reduce((acc, cur) => acc + cur, 0);
+            totalDisplay.textContent = `Всего за сегодня: ${total} подтягиваний`;
+        };
+
+        render()
+
+        btn.addEventListener('click', () => {
+            const resp = Number(inp.value)
+            if (resp <= 0) return;
+            repsArray.push(resp);
+            inp.value = "";
+            localStorage.setItem('myReps', JSON.stringify(repsArray));
+            render();
+        });
+
+        clearBtn.addEventListener('click', () => {
+            repsArray = []
+            localStorage.removeItem('myReps')
+            render();
+        }); 
+    </script>
+</body>
+</html>
